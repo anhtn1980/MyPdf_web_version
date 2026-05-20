@@ -21,19 +21,22 @@ def home():
         if not pdf_file:
             return "Không có file PDF"
 
-        # Tạo tên file random
-        unique_id = str(uuid.uuid4())
+        # Lấy tên file gốc
+        original_filename = pdf_file.filename
 
+        # Tách tên và extension
+        base_name, ext = os.path.splitext(original_filename)
+
+        # Tạo đường dẫn file
         input_pdf_path = os.path.join(
             UPLOAD_FOLDER,
-            f"{unique_id}_input.pdf"
+            f"{base_name}_input{ext}"
         )
 
         output_pdf_path = os.path.join(
             UPLOAD_FOLDER,
-            f"{unique_id}_highlighted.pdf"
+            f"{base_name}_highlighted{ext}"
         )
-
         # Save file upload
         pdf_file.save(input_pdf_path)
 
@@ -66,7 +69,8 @@ def home():
         # Download file
         return send_file(
             output_pdf_path,
-            as_attachment=True
+            as_attachment=True,
+            download_name=f"{base_name}_highlighted{ext}"
         )
 
     return render_template("index.html")
